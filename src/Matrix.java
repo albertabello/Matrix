@@ -38,11 +38,25 @@ public class Matrix {
         }
     }
     
-    public static double applyConvolution(double [][] input, 
-		      int x, int y,
-		      double [] k,
-		      int kernelWidth, 
-		      int kernelHeight){
+    public static double [][] convolution2D(double [][] input, int width, int height, double [] kernel, int kernelWidth,int kernelHeight){
+    	int smallWidth = width - kernelWidth + 1;
+		int smallHeight = height - kernelHeight + 1; 
+		double [][] output = new double [smallWidth][smallHeight];
+		for(int i=0;i<smallWidth;++i){
+			for(int j=0;j<smallHeight;++j){
+				output[i][j]=0;
+			}
+		}
+		for(int i=0;i<smallWidth;++i){
+			for(int j=0;j<smallHeight;++j){
+				output[i][j] = doConv(input,i,j,kernel,
+						kernelWidth,kernelHeight);
+			}
+		}
+		return output;
+    }
+    
+    public static double doConv(double [][] input, int x, int y, double [] k, int kernelWidth, int kernelHeight){
 		double output = 0;
 		for(int i=0;i<kernelWidth;++i){
 			for(int j=0;j<kernelHeight;++j){
@@ -52,32 +66,9 @@ public class Matrix {
 		return output;
 	}
     
-    public static double [][] convolution2D(double [][] input,
-		      int width, int height, 
-		      double [] kernel, 
-		      int kernelWidth,
-		      int kernelHeight){
-    	int smallWidth = width - kernelWidth + 1;
-		int smallHeight = height - kernelHeight + 1; 
-		double [][] output = new double [smallWidth][smallHeight];
-		for(int i=0;i<smallWidth;++i){
-		for(int j=0;j<smallHeight;++j){
-				output[i][j]=0;
-			}
-		}
-		for(int i=0;i<smallWidth;++i){
-			for(int j=0;j<smallHeight;++j){
-				output[i][j] = applyConvolution(input,i,j,kernel,
-						kernelWidth,kernelHeight);
-			}
-		}
-		return output;
-    }
     public static Matrix convolution2DPadded(double [][] input, int width, int height, double [] kernel, int kernelWidth, int kernelHeight){
 		int smallWidth = width - kernelWidth + 1;
 		int smallHeight = height - kernelHeight + 1; 
-		int top = kernelHeight/2;
-		int left = kernelWidth/2;
 		double small [][] = new double [smallWidth][smallHeight];
 		small = convolution2D(input,width,height,kernel,kernelWidth,kernelHeight);
 		Matrix output = Matrix.empty(smallWidth,smallHeight);
@@ -92,10 +83,11 @@ public class Matrix {
 
 	/**
 	 * @param args
+	 * Convolution and derivation of matrices
 	 */
 	public static void main(String args[]) {
 		// TODO Auto-generated method stub
-		if (args.length != 2) {
+		if (args.length != 2 || Integer.parseInt(args[0])<3 || Integer.parseInt(args[1]) == 0 ) {
 			System.out.println("Be a good boy");
 			System.exit(1);
 		}
