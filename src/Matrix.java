@@ -31,6 +31,7 @@ public class Matrix {
 
     // print matrix to standard output
     public void show() {
+    	System.out.println();
         for (int i = 0; i < M; i++) {
             for (int j = 0; j < N; j++) 
                 System.out.print(data[i][j]+"\t");
@@ -81,9 +82,33 @@ public class Matrix {
 		return output;
 	}
 
+    public static Matrix diffX(Matrix M) {
+    	Matrix output = Matrix.empty(M.M, M.N-1);
+    	for (int i=0; i<M.M; i++) {
+    		int x=1;
+    		for (int j=0; j<M.N-1; j++) {
+    			output.data[i][j] =  M.data[i][j]*(M.N-x);
+    			x++;
+    		}
+    	}
+    	return output;
+    }
+    
+    public static Matrix diffY(Matrix M) {
+    	Matrix output = Matrix.empty(M.M-1, M.N);
+    	for (int i=0; i<M.N; i++) {
+    		int y=1;
+    		for (int j=0; j<M.M-1; j++) {
+    			output.data[j][i] =  M.data[j][i]*(M.M-y);
+    			y++;
+    		}
+    	}
+    	return output;
+    }
+   
 	/**
 	 * @param args
-	 * Convolution and derivation of matrices
+	 * Convolution and derivation of matrices or Sobel Operator
 	 */
 	public static void main(String args[]) {
 		// TODO Auto-generated method stub
@@ -95,7 +120,7 @@ public class Matrix {
 		//Random Matrix
         Matrix M = Matrix.random(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
         M.show(); 
-		System.out.println("\n\n");
+		//System.out.println("\n\n");
         //Empty result Matrix
         //Matrix resultConv = Matrix.empty(Integer.parseInt(args[0])+1-1, Integer.parseInt(args[1])+3-1);
         //resultConv.show();
@@ -103,17 +128,11 @@ public class Matrix {
         Matrix resultConv = convolution2DPadded(M.data, M.M, M.N, conv, 3, 1);
         resultConv.show();
         
+        Matrix resultDiffX = diffX(resultConv);
+        resultDiffX.show();
         
-        /*int[][] output = paddingTrans(M.M,M.N,conv);
-        for (int i = 0; i < M.M; i++) {
-            for (int j = 0; j < M.N; j++) 
-                System.out.print(output[i][j]);
-            System.out.println();
-        }*/		
-        //Correct input arguments
-		//System.out.println(args[0]);
-		//System.out.println(args[1]);
-		//System.out.println(conv[0]+""+conv[1]+""+conv[2]);
+        Matrix resultDiffY = diffY(resultConv);
+        resultDiffY.show();
 	}
 
 }
