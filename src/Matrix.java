@@ -105,6 +105,40 @@ public class Matrix {
     	}
     	return output;
     }
+    
+    public static Matrix slowConvolution(double [][] input, int width, int height, double [] kernel, int kernelWidth, int kernelHeight){
+		int sum, mm,nn;
+		int centerX=kernelWidth/2;
+		int centerY=kernelHeight/2;
+		int rowIndex, colIndex;
+
+		Matrix output = Matrix.empty(width,height);
+		for (int i=0; i < height; i++){
+			for (int j=0; j < width; j++){
+				sum=0;
+				for (int m=0; m<kernelHeight; m++){
+					mm = kernelHeight - 1 -m;
+					for (int n=0; n<kernelWidth; n++){
+						nn = kernelWidth -1 -n;
+						System.out.print(n);
+						rowIndex = j + m - centerY;
+						colIndex = j + n - centerX;
+						
+						if (rowIndex >= 0 && rowIndex < height && colIndex >= 0 && colIndex < width){
+							sum = (int) (sum + input[width * rowIndex][colIndex] * kernel[kernelWidth * mm]);
+						}
+					}
+					System.out.println(m);
+				}
+				output.data[width * i][j] = sum;
+			}
+		}
+		
+		//http://www.songho.ca/dsp/convolution/convolution.html
+		return output;
+	}
+    
+    
    
 	/**
 	 * @param args
@@ -128,11 +162,14 @@ public class Matrix {
         Matrix resultConv = convolution2DPadded(M.data, M.M, M.N, conv, 3, 1);
         resultConv.show();
         
-        Matrix resultDiffX = diffX(resultConv);
+        Matrix convRes = slowConvolution(M.data, M.M, M.N, conv, 3, 1);
+        convRes.show();
+        /*Matrix resultDiffX = diffX(resultConv);
         resultDiffX.show();
         
         Matrix resultDiffY = diffY(resultConv);
-        resultDiffY.show();
+        resultDiffY.show();*/
+        
 	}
 
 }
